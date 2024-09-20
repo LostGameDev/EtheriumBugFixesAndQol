@@ -30,5 +30,8 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\TestPlugin\lib\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>lib\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
