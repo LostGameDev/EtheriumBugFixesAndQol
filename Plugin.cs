@@ -4,6 +4,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 namespace BugFixesAndQoL;
@@ -19,7 +20,7 @@ public class Plugin : BaseUnityPlugin
     {
         // Plugin startup logic
         Logger = base.Logger;
-        Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+        Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded! Version: {MyPluginInfo.PLUGIN_VERSION}.");
 
         // Initialize Harmony
         Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
@@ -79,7 +80,6 @@ public class ManualFixes
     }
 }
 
-// Harmony patches for the Movie class
 [HarmonyPatch]
 public static class MoviePatches
 {
@@ -102,7 +102,7 @@ public static class MoviePatches
         }
 
         // Mark this movie as destroyed
-        Plugin.Logger.LogInfo($"Patching Movie Destroy for ID = {movieID}");
+        //Plugin.Logger.LogInfo($"Patching Movie Destroy for ID = {movieID}");
         destroyedMovies[movieID] = true; // Mark as destroyed to prevent double-destroy issue
         return true; // Continue with original method
     }
@@ -130,5 +130,31 @@ public static class MoviePatches
         //Plugin.Logger.LogInfo($"Movie {movieID} entry removed from destroyedMovies dictionary (finalized).");
 
         return true; // Continue with original method
+    }
+}
+
+[HarmonyPatch(typeof(StateFSM_Deploy), "onUpdate")]
+public static class StateFSM_Deploy_onUpdate_Patch
+{
+    [HarmonyPrefix]
+    public static bool Prefix(StateFSM_Deploy __instance)
+    {
+        ArmyAgent agent = Traverse.Create(__instance).Field("agent").GetValue<ArmyAgent>();
+
+        // Check if getAttackLieutenant or mission is null before proceeding
+        if (agent.getAttackLieutenant() == null || agent.getAttackLieutenant().mission == null)
+        {
+            Plugin.Logger.LogWarning("Error: getAttackLieutenant or mission is null in StateFSM_Deploy.onUpdate.");
+            return false; // Skip the original method to prevent the crash
+        }
+
+        Colony landingColony = agent.getAttackLieutenant().mission.landingColony;
+        if (landingColony == null || landingColony.isIsolated())
+        {
+            agent.getAttackLieutenant().mission.searchBestLandingColony();
+        }
+
+        // Additional logic remains unchanged
+        return true; // Continue with the original method if no issues
     }
 }
