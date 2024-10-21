@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using BepInEx.Configuration;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,15 @@ public class Plugin : BaseUnityPlugin
 	public static new ManualLogSource Logger;
 	ManualFixes ManualFixesInstance = new ManualFixes();
 
+	//Config Values
+	public static ConfigEntry<bool> configEndTurnOnInvade;
+
 	private void Awake()
 	{
 		// Plugin startup logic
 		Logger = base.Logger;
 		Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded! Version: {MyPluginInfo.PLUGIN_VERSION}.");
+		CreateConfigs();
 
 		// Initialize Harmony
 		Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
@@ -31,6 +36,14 @@ public class Plugin : BaseUnityPlugin
 
 		// Check if the game is running in DirectX 9
 		CheckGraphicsAPI();
+	}
+
+	private void CreateConfigs()
+	{
+		configEndTurnOnInvade = Config.Bind("General",	  // The section under which the option is shown
+										 "EndTurnOnInvade",  // The key of the configuration option in the configuration file
+										 true, // The default value
+										 "When enabled if the player or an npc invades a territory on a planet, once the conquest is complete it will end their turn"); // Description of the option to show in the config file
 	}
 
 	private void CheckGraphicsAPI()
@@ -205,5 +218,63 @@ public static class FSMStatePatches
 			return false; // Skip the original method to avoid the error
 		}
 		return true; // Continue with the original method if currentState is valid
+	}
+}
+
+[HarmonyPatch(typeof(GUIScaleformScoreScreen))]
+public static class GUIScaleformScoreScreen_Patch
+{
+	[HarmonyPrefix]
+	[HarmonyPatch("Start")]
+	public static bool Start_Prefix(GUIScaleformScoreScreen __instance)
+	{
+		//Plugin.Logger.LogInfo("[GUIScaleformScoreScreen] [Start] Prefix patch initiated.");
+
+		// Ensure InitParams is properly initialized
+		if (__instance.InitParams == null)
+		{
+			Plugin.Logger.LogError("[GUIScaleformScoreScreen] InitParams is null during Start. Skipping Start.");
+			return false; // Skip the original method to prevent crashes
+		}
+
+		//Plugin.Logger.LogInfo("[GUIScaleformScoreScreen] InitParams is valid. Proceeding with Start.");
+		return true; // Continue with the original method
+	}
+
+	[HarmonyPrefix]
+	[HarmonyPatch("Update")]
+	public static bool Update_Prefix(GUIScaleformScoreScreen __instance, bool ___b_init, bool ___b_isStarted)
+	{
+		// Log the current initialization status
+		//Plugin.Logger.LogInfo($"[GUIScaleformScoreScreen] Update - b_init: {___b_init}, b_isStarted: {___b_isStarted}");
+
+		// Ensure that b_init and b_isStarted are true before calling Update
+		if (!___b_init || !___b_isStarted)
+		{
+			Plugin.Logger.LogWarning("[GUIScaleformScoreScreen] Skipping Update due to uninitialized state.");
+			return false; // Skip the original method to avoid issues
+		}
+
+		//Plugin.Logger.LogInfo("[GUIScaleformScoreScreen] Update proceeding normally.");
+		return true; // Continue with the original method
+	}
+}
+
+[HarmonyPatch(typeof(CampaignManager))]
+public static class EndTurnOnInvadePatch
+{
+
+	[HarmonyPostfix]
+	[HarmonyPatch("Awake")]
+	public static void Awake_Postfix(CampaignManager __instance, MultiplayerScript ___multiScript)
+	{
+		if (Plugin.configEndTurnOnInvade.Value)
+		{
+			// Ensure we only trigger when going back to the campaign
+			if (___multiScript.b_iAmPlayingCampaign)
+			{
+				__instance.nextPlayer();
+			}
+		}
 	}
 }
