@@ -11,8 +11,8 @@ This plugin introduces several bug fixes and quality of life improvements for th
 - Option to end the player's turn automatically after an invasion is completed.
 
 ## Latest Version
-Currently the latest publicly available version is 1.3.0
-The version currently being developed is 1.4.0
+- Currently the latest publicly available version is 1.3.0
+- The version currently being developed is 1.4.0
 
 ## Installation
 
