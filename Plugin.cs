@@ -19,10 +19,10 @@ public class Plugin : BaseUnityPlugin
 	//Config Values
 	public static ConfigEntry<bool> configEndTurnOnInvade;
 	public static ConfigEntry<string> configNatFacilitatorIP;
-    public static ConfigEntry<int> configNatFacilitatorPort;
+	public static ConfigEntry<int> configNatFacilitatorPort;
 
 
-    private void Awake()
+	private void Awake()
 	{
 		// Plugin startup logic
 		Logger = base.Logger;
@@ -31,10 +31,10 @@ public class Plugin : BaseUnityPlugin
 
 		// Change Nat Facilitator IP and Port
 		Network.natFacilitatorIP = configNatFacilitatorIP.Value;
-        Network.natFacilitatorPort = configNatFacilitatorPort.Value;
+		Network.natFacilitatorPort = configNatFacilitatorPort.Value;
 
-        // Initialize Harmony
-        Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
+		// Initialize Harmony
+		Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
 		harmony.PatchAll();
 
 		// Remove AVProWindowsMedia-x64.dll if it exists
@@ -53,15 +53,15 @@ public class Plugin : BaseUnityPlugin
 										 "When enabled if the player or an npc invades a territory on a planet, once the conquest is complete it will end their turn"); // Description of the option to show in the config file
 
 		configNatFacilitatorIP = Config.Bind("Multiplayer",   // The section under which the option is shown
-                                         "NatFacilitatorIP",  // The key of the configuration option in the configuration file
-                                         "127.0.0.1", // The default value
-                                         "The IP address for the Nat Facilitator Server"); // Description of the option to show in the config file)
+										 "NatFacilitatorIP",  // The key of the configuration option in the configuration file
+										 "127.0.0.1", // The default value
+										 "The IP address for the Nat Facilitator Server"); // Description of the option to show in the config file)
 
-        configNatFacilitatorPort = Config.Bind("Multiplayer",   // The section under which the option is shown
-                                 "NatFacilitatorPort",  // The key of the configuration option in the configuration file
-                                 50005, // The default value
-                                 "The port for the Nat Facilitator Server"); // Description of the option to show in the config file)
-    }
+		configNatFacilitatorPort = Config.Bind("Multiplayer",   // The section under which the option is shown
+								 "NatFacilitatorPort",  // The key of the configuration option in the configuration file
+								 50005, // The default value
+								 "The port for the Nat Facilitator Server"); // Description of the option to show in the config file)
+	}
 
 	private void CheckGraphicsAPI()
 	{
@@ -294,4 +294,4 @@ public static class EndTurnOnInvadePatch
 			}
 		}
 	}
-}
+} 
