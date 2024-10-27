@@ -55,7 +55,7 @@ If the `EndTurnOnInvade` configuration is enabled, the player's turn will automa
 
 ## Compatibility
 
-- **Game Version:** Etherium
+- **Game:** Etherium
 - **Requires:** BepInEx 5.x
 
 ## Known Issues
