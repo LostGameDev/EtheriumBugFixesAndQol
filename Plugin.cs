@@ -47,21 +47,24 @@ public class Plugin : BaseUnityPlugin
 
 	private void CreateConfigs()
 	{
-		configEndTurnOnInvade = Config.Bind("General",	  // The section under which the option is shown
-										 "EndTurnOnInvade",  // The key of the configuration option in the configuration file
-										 true, // The default value
-										 "When enabled if the player or an npc invades a territory on a planet, once the conquest is complete it will end their turn"); // Description of the option to show in the config file
+        if (!Config.TryGetEntry("General", "EndTurnOnInvade", out configEndTurnOnInvade))
+        {
+            configEndTurnOnInvade = Config.Bind("General", "EndTurnOnInvade", true,
+                                                "Ends turn after invasion.");
+        }
 
-		configNatFacilitatorIP = Config.Bind("Multiplayer",   // The section under which the option is shown
-										 "NatFacilitatorIP",  // The key of the configuration option in the configuration file
-										 "127.0.0.1", // The default value
-										 "The IP address for the Nat Facilitator Server"); // Description of the option to show in the config file)
+        if (!Config.TryGetEntry("Multiplayer", "NatFacilitatorIP", out configNatFacilitatorIP))
+        {
+            configNatFacilitatorIP = Config.Bind("Multiplayer", "NatFacilitatorIP", "127.0.0.1",
+                                                 "IP for Nat Facilitator Server.");
+        }
 
-		configNatFacilitatorPort = Config.Bind("Multiplayer",   // The section under which the option is shown
-								 "NatFacilitatorPort",  // The key of the configuration option in the configuration file
-								 50005, // The default value
-								 "The port for the Nat Facilitator Server"); // Description of the option to show in the config file)
-	}
+        if (!Config.TryGetEntry("Multiplayer", "NatFacilitatorPort", out configNatFacilitatorPort))
+        {
+            configNatFacilitatorPort = Config.Bind("Multiplayer", "NatFacilitatorPort", 50005,
+                                                   "Port for Nat Facilitator Server.");
+        }
+    }
 
 	private void CheckGraphicsAPI()
 	{
@@ -239,14 +242,12 @@ public static class FSMStatePatches
 }
 
 [HarmonyPatch(typeof(GUIScaleformScoreScreen))]
-public static class GUIScaleformScoreScreen_Patch
+public static class GUIScaleformScoreScreenPatch
 {
 	[HarmonyPrefix]
 	[HarmonyPatch("Start")]
 	public static bool Start_Prefix(GUIScaleformScoreScreen __instance)
 	{
-		//Plugin.Logger.LogInfo("[GUIScaleformScoreScreen] [Start] Prefix patch initiated.");
-
 		// Ensure InitParams is properly initialized
 		if (__instance.InitParams == null)
 		{
@@ -254,25 +255,28 @@ public static class GUIScaleformScoreScreen_Patch
 			return false; // Skip the original method to prevent crashes
 		}
 
-		//Plugin.Logger.LogInfo("[GUIScaleformScoreScreen] InitParams is valid. Proceeding with Start.");
+		// Initialize the required flags for Update to proceed safely
+		Traverse.Create(__instance).Field("b_init").SetValue(true);
+		Traverse.Create(__instance).Field("b_isStarted").SetValue(true);
+
 		return true; // Continue with the original method
 	}
 
 	[HarmonyPrefix]
 	[HarmonyPatch("Update")]
-	public static bool Update_Prefix(GUIScaleformScoreScreen __instance, bool ___b_init, bool ___b_isStarted)
+	public static bool Update_Prefix(GUIScaleformScoreScreen __instance)
 	{
 		// Log the current initialization status
-		//Plugin.Logger.LogInfo($"[GUIScaleformScoreScreen] Update - b_init: {___b_init}, b_isStarted: {___b_isStarted}");
+		bool b_init = Traverse.Create(__instance).Field("b_init").GetValue<bool>();
+		bool b_isStarted = Traverse.Create(__instance).Field("b_isStarted").GetValue<bool>();
 
-		// Ensure that b_init and b_isStarted are true before calling Update
-		if (!___b_init || !___b_isStarted)
+		// Ensure that both b_init and b_isStarted are true before calling Update
+		if (!b_init || !b_isStarted)
 		{
 			Plugin.Logger.LogWarning("[GUIScaleformScoreScreen] Skipping Update due to uninitialized state.");
 			return false; // Skip the original method to avoid issues
 		}
 
-		//Plugin.Logger.LogInfo("[GUIScaleformScoreScreen] Update proceeding normally.");
 		return true; // Continue with the original method
 	}
 }
