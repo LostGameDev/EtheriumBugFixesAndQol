@@ -95,7 +95,7 @@ public class ManualFixes
 	{
 		if (!File.Exists($"{GameRootDirectory}/Etherium_Data/Plugins/AVProWindowsMedia-x64.dll"))
 		{
-			Plugin.Logger.LogInfo("AVProWindowsMedia-x64.dll does not exist (This is a good thing! This means you won't experience the tutorial crash.)");
+			Plugin.Logger.LogInfo("AVProWindowsMedia-x64.dll does not exist (This is a good thing! This means you shouldn't experience the tutorial crash.)");
 			return false;
 		}
 		try
@@ -244,6 +244,7 @@ public static class FSMStatePatches
 [HarmonyPatch(typeof(GUIScaleformScoreScreen))]
 public static class GUIScaleformScoreScreenPatch
 {
+	/*
 	[HarmonyPrefix]
 	[HarmonyPatch("Start")]
 	public static bool Start_Prefix(GUIScaleformScoreScreen __instance)
@@ -279,6 +280,7 @@ public static class GUIScaleformScoreScreenPatch
 
 		return true; // Continue with the original method
 	}
+	*/
 }
 
 [HarmonyPatch(typeof(CampaignManager))]
