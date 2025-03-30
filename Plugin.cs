@@ -242,45 +242,43 @@ public static class FSMStatePatches
 }
 
 [HarmonyPatch(typeof(GUIScaleformScoreScreen))]
-public static class GUIScaleformScoreScreenPatch
+public static class GUIScaleformScoreScreen_Patch
 {
-	/*
 	[HarmonyPrefix]
 	[HarmonyPatch("Start")]
 	public static bool Start_Prefix(GUIScaleformScoreScreen __instance)
 	{
-		// Ensure InitParams is properly initialized
-		if (__instance.InitParams == null)
+		bool flag = __instance.InitParams == null;
+		bool result;
+		if (flag)
 		{
 			Plugin.Logger.LogError("[GUIScaleformScoreScreen] InitParams is null during Start. Skipping Start.");
-			return false; // Skip the original method to prevent crashes
+			result = false;
 		}
-
-		// Initialize the required flags for Update to proceed safely
-		Traverse.Create(__instance).Field("b_init").SetValue(true);
-		Traverse.Create(__instance).Field("b_isStarted").SetValue(true);
-
-		return true; // Continue with the original method
+		else
+		{
+			result = true;
+		}
+		return result;
 	}
 
 	[HarmonyPrefix]
 	[HarmonyPatch("Update")]
-	public static bool Update_Prefix(GUIScaleformScoreScreen __instance)
+	public static bool Update_Prefix(GUIScaleformScoreScreen __instance, bool ___b_init, bool ___b_isStarted)
 	{
-		// Log the current initialization status
-		bool b_init = Traverse.Create(__instance).Field("b_init").GetValue<bool>();
-		bool b_isStarted = Traverse.Create(__instance).Field("b_isStarted").GetValue<bool>();
-
-		// Ensure that both b_init and b_isStarted are true before calling Update
-		if (!b_init || !b_isStarted)
+		bool flag = !___b_init || !___b_isStarted;
+		bool result;
+		if (flag)
 		{
 			Plugin.Logger.LogWarning("[GUIScaleformScoreScreen] Skipping Update due to uninitialized state.");
-			return false; // Skip the original method to avoid issues
+			result = false;
 		}
-
-		return true; // Continue with the original method
+		else
+		{
+			result = true;
+		}
+		return result;
 	}
-	*/
 }
 
 [HarmonyPatch(typeof(CampaignManager))]
