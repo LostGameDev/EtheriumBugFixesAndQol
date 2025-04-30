@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: "[BUG] "
 labels: bug
 assignees: ''
 
@@ -14,6 +14,7 @@ A clear and concise description of what the bug is.
 Mod Version:
 OS:
 Game Launch Options:
+Single Player or Multiplayer?: 
 
 **Other mods**
 If you have any other mods installed please list them here.
