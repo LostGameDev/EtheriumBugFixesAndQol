@@ -25,9 +25,10 @@ Once the plugin is installed, a configuration file will be generated in the `Bep
 
 | Config Key             | Default Value | Description                                                                                  |
 |------------------------|---------------|----------------------------------------------------------------------------------------------|
-| `General.EndTurnOnInvade`  | `true`        | Automatically end the player's turn after completing an invasion.                             |
-| `Multiplayer.NatFacilitatorIP` | `"127.0.0.1"` | The IP address for the NAT Facilitator server.                                                |
-| `Multiplayer.NatFacilitatorPort` | `50005`       | The port for the NAT Facilitator server.                                                      |
+| `General.EndTurnOnInvade`        | `true`        | Automatically end the player's turn after completing an invasion.                  |
+| `Multiplayer.NatFacilitatorIP`   | `"127.0.0.1"` | The IP address for the NAT Facilitator server.                                     |
+| `Multiplayer.NatFacilitatorPort` | `50005`       | The port for the NAT Facilitator server.                                           |
+| `Debug.EnableDebugLogging`       | `false`       | Enable Debug Logging for the mod (Will cause a LOT of messages in console!).       |
 
 ## Patches
 
