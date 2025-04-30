@@ -19,7 +19,8 @@ public class Plugin : BaseUnityPlugin
 	//Config Values
 	public static ConfigEntry<bool> configEndTurnOnInvade;
 	public static ConfigEntry<string> configNatFacilitatorIP;
-	public static ConfigEntry<int> configNatFacilitatorPort;
+    public static ConfigEntry<int> configNatFacilitatorPort;
+	public static ConfigEntry<bool> configDebugLogging;
 
 
 	private void Awake()
@@ -64,7 +65,13 @@ public class Plugin : BaseUnityPlugin
             configNatFacilitatorPort = Config.Bind("Multiplayer", "NatFacilitatorPort", 50005,
                                                    "Port for Nat Facilitator Server.");
         }
-    }
+
+		if (!Config.TryGetEntry("Debug", "EnableDebugLogging", out configDebugLogging))
+		{
+			configDebugLogging = Config.Bind("Debug", "EnableDebugLogging", false,
+												"Enable Debug Logging for the mod (Will cause a LOT of messages in console!).");
+		}
+	}
 
 	private void CheckGraphicsAPI()
 	{
@@ -129,12 +136,18 @@ public static class MoviePatches
 		if (destroyedMovies.TryGetValue(movieID, out bool isDestroyed) && isDestroyed)
 		{
 			// Skip the method if already destroyed
-			//Plugin.Logger.LogInfo($"Movie {movieID} is already destroyed, skipping.");
+			if (Plugin.configDebugLogging.Value)
+            {
+				Plugin.Logger.LogInfo($"Movie {movieID} is already destroyed, skipping.");
+			}
 			return false; // Skip original method
 		}
 
 		// Mark this movie as destroyed
-		//Plugin.Logger.LogInfo($"Patching Movie Destroy for ID = {movieID}");
+		if (Plugin.configDebugLogging.Value)
+        {
+			Plugin.Logger.LogInfo($"Patching Movie Destroy for ID = {movieID}");
+        }
 		destroyedMovies[movieID] = true; // Mark as destroyed to prevent double-destroy issue
 		return true; // Continue with original method
 	}
@@ -149,18 +162,26 @@ public static class MoviePatches
 		// Check if this movie has already been finalized
 		if (destroyedMovies.TryGetValue(movieID, out bool isDestroyed) && isDestroyed)
 		{
-			//Plugin.Logger.LogInfo($"Movie {movieID} has already been finalized, skipping.");
+			if (Plugin.configDebugLogging.Value)
+			{
+				Plugin.Logger.LogInfo($"Movie {movieID} has already been finalized, skipping.");
+			}
 			return false; // Skip original method
 		}
 
 		// Mark this movie as destroyed/finalized
-		//Plugin.Logger.LogInfo($"Patching Movie Finalize for ID = {movieID}");
+		if (Plugin.configDebugLogging.Value)
+		{
+			Plugin.Logger.LogInfo($"Patching Movie Finalize for ID = {movieID}");
+		}
 		destroyedMovies[movieID] = true; // Mark as destroyed to prevent double-destroy issue
 
 		// Clean up the dictionary by removing the movie ID entry
 		destroyedMovies.Remove(movieID);
-		//Plugin.Logger.LogInfo($"Movie {movieID} entry removed from destroyedMovies dictionary (finalized).");
-
+		if (Plugin.configDebugLogging.Value)
+        {
+			Plugin.Logger.LogInfo($"Movie {movieID} entry removed from destroyedMovies dictionary (finalized).");
+		}		
 		return true; // Continue with original method
 	}
 }
@@ -248,36 +269,47 @@ public static class GUIScaleformScoreScreen_Patch
 	[HarmonyPatch("Start")]
 	public static bool Start_Prefix(GUIScaleformScoreScreen __instance)
 	{
-		bool flag = __instance.InitParams == null;
-		bool result;
-		if (flag)
+		if (Plugin.configDebugLogging.Value)
+        {
+			Plugin.Logger.LogInfo("[GUIScaleformScoreScreen] [Start] Prefix patch initiated.");
+		}
+
+		// Ensure InitParams is properly initialized
+		if (__instance.InitParams == null)
 		{
 			Plugin.Logger.LogError("[GUIScaleformScoreScreen] InitParams is null during Start. Skipping Start.");
-			result = false;
+			return false; // Skip the original method to prevent crashes
 		}
-		else
-		{
-			result = true;
+
+		if (Plugin.configDebugLogging.Value)
+        {
+			Plugin.Logger.LogInfo("[GUIScaleformScoreScreen] InitParams is valid. Proceeding with Start.");
 		}
-		return result;
+		return true; // Continue with the original method
 	}
 
 	[HarmonyPrefix]
 	[HarmonyPatch("Update")]
 	public static bool Update_Prefix(GUIScaleformScoreScreen __instance, bool ___b_init, bool ___b_isStarted)
 	{
-		bool flag = !___b_init || !___b_isStarted;
-		bool result;
-		if (flag)
+		if (Plugin.configDebugLogging.Value)
+        {
+			// Log the current initialization status
+			Plugin.Logger.LogInfo($"[GUIScaleformScoreScreen] Update - b_init: {___b_init}, b_isStarted: {___b_isStarted}");
+		}			
+
+		// Ensure that b_init and b_isStarted are true before calling Update
+		if (!___b_init || !___b_isStarted)
 		{
 			Plugin.Logger.LogWarning("[GUIScaleformScoreScreen] Skipping Update due to uninitialized state.");
-			result = false;
+			return false; // Skip the original method to avoid issues
 		}
-		else
-		{
-			result = true;
+
+		if (Plugin.configDebugLogging.Value)
+        {
+			Plugin.Logger.LogInfo("[GUIScaleformScoreScreen] Update proceeding normally.");
 		}
-		return result;
+		return true; // Continue with the original method
 	}
 }
 
