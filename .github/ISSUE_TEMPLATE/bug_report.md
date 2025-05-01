@@ -15,6 +15,7 @@ Mod Version:
 OS:
 Game Launch Options:
 Single Player or Multiplayer?: 
+Faction: 
 
 **Other mods**
 If you have any other mods installed please list them here.
