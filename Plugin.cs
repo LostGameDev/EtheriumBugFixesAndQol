@@ -140,6 +140,7 @@ public static class MoviePatches
             {
 				Plugin.Logger.LogInfo($"Movie {movieID} is already destroyed, skipping.");
 			}
+			destroyedMovies[movieID] = true; // Mark as destroyed to prevent double-destroy issue
 			return false; // Skip original method
 		}
 
