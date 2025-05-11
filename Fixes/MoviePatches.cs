@@ -23,7 +23,6 @@ namespace BugFixesAndQoL
 				{
 					Plugin.Logger.LogInfo($"Movie {movieID} is already destroyed, skipping.");
 				}
-				destroyedMovies[movieID] = true; // Mark as destroyed to prevent double-destroy issue
 				return false; // Skip original method
 			}
 
@@ -33,6 +32,13 @@ namespace BugFixesAndQoL
 				Plugin.Logger.LogInfo($"Patching Movie Destroy for ID = {movieID}");
 			}
 			destroyedMovies[movieID] = true; // Mark as destroyed to prevent double-destroy issue
+
+			// Clean up the dictionary by removing the movie ID entry
+			destroyedMovies.Remove(movieID);
+			if (Plugin.configDebugLogging.Value)
+			{
+				Plugin.Logger.LogInfo($"Movie {movieID} entry removed from destroyedMovies dictionary (destroyed).");
+			}
 			return true; // Continue with original method
 		}
 
