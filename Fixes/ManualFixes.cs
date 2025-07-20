@@ -22,7 +22,7 @@ namespace BugFixesAndQoL
 			}
 			catch (Exception e)
 			{
-				Plugin.Logger.LogInfo($"Failed to remove AVProWindowsMedia-x64.dll due to {e}. Please quit the game and remove it manually!");
+				Plugin.Logger.LogInfo($"Failed to remove AVProWindowsMedia-x64.dll. Please quit the game and remove it manually! Caused by: {e}");
 				return false;
 			}
 		}
