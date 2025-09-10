@@ -23,13 +23,21 @@ namespace BugFixesAndQoL
 
 		public static OptionsMenuChanges.WINDOWMODE getFullScreen()
 		{
-			return e_fullScreen;
+            if (Plugin.configDebugLogging.Value)
+            {
+                Plugin.Logger.LogInfo($"[OptionsMenuChanges] [getFullScreen] Returned e_fullScreen, e_fullScreen is currently {e_fullScreen}.");
+            }
+            return e_fullScreen;
 		}
 
 		public static void setFullScreen(OptionsMenuChanges.WINDOWMODE _e)
 		{
-			e_fullScreen = _e;
-		}
+            e_fullScreen = _e;
+            if (Plugin.configDebugLogging.Value)
+            {
+                Plugin.Logger.LogInfo($"[OptionsMenuChanges] [setFullScreen] Set e_fullScreen to {e_fullScreen}.");
+            }
+        }
 
 		//Patches
 		[HarmonyPatch(typeof(OptionManager), "DefaultParam")]
@@ -38,14 +46,22 @@ namespace BugFixesAndQoL
 		{
 			e_fullScreen = OptionsMenuChanges.WINDOWMODE.FULLSCREEN;
 			__instance.SavePref();
-		}
+            if (Plugin.configDebugLogging.Value)
+            {
+                Plugin.Logger.LogInfo($"[OptionManager] [DefaultParam] Set e_fullScreen to {e_fullScreen}.");
+            }
+        }
 
 		[HarmonyPatch(typeof(OptionManager), "SavePref")]
 		[HarmonyPostfix]
 		public static void OptionManager_SavePref_Postfix()
 		{
 			PlayerPrefs.SetInt("fullScreen", (int)e_fullScreen);
-		}
+            if (Plugin.configDebugLogging.Value)
+            {
+                Plugin.Logger.LogInfo($"[OptionManager] [SavePref] PlayerPref 'fullScreen' set to {e_fullScreen} as int ({(int)e_fullScreen}).");
+            }
+        }
 
 		[HarmonyPatch(typeof(OptionManager), "LoadPref")]
 		[HarmonyPostfix]
@@ -58,8 +74,12 @@ namespace BugFixesAndQoL
 			else
 			{
 				e_fullScreen = (OptionsMenuChanges.WINDOWMODE)PlayerPrefs.GetInt("fullScreen");
-				//May need to call loadBinding() again, untested
-			}
+                if (Plugin.configDebugLogging.Value)
+                {
+                    Plugin.Logger.LogInfo($"[OptionManager] [LoadPref] Set e_fullScreen to PlayerPref 'fullScreen' e_fullScreen is now {e_fullScreen}");
+                }
+                //May need to call loadBinding() again, untested
+            }
 		}
 
 		[HarmonyPatch(typeof(OptionManager), "refreshGrapicOptions")]
