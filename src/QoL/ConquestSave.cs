@@ -1,52 +1,21 @@
 ﻿using HarmonyLib;
 using Scaleform;
 using System.Reflection;
-using UnityEngine;
+using EtheriumLib.Debug;
 
 namespace BugFixesAndQoL
 {
     [HarmonyPatch]
     public static class ConquestSave
     {
-        //Temporary and horribly optimised debug function i need to remove at some point
-        static void PrintAllObjectsInHierarchy()
-        {
-            Plugin.Logger.LogInfo("--- Printing Scene Hierarchy ---");
-
-            foreach (GameObject go in Object.FindObjectsOfType(typeof(GameObject)))
-            {
-                if (go.transform.parent == null) 
-                {
-                    TraverseAndPrint(go.transform, 0);
-                }
-            }
-
-            Plugin.Logger.LogInfo("--- Hierarchy Printing Complete ---");
-        }
-
-        //Also temporary and horribly optimised debug function i need to remove at some point
-        static void TraverseAndPrint(Transform currentTransform, int indentLevel)
-        {
-            // Create indentation for better readability
-            string indent = new string(' ', indentLevel * 2);
-
-            // Print the current GameObject's name
-            Plugin.Logger.LogInfo(indent + currentTransform.gameObject.name);
-
-            // Recursively call for each child
-            foreach (Transform child in currentTransform)
-            {
-                TraverseAndPrint(child, indentLevel + 1);
-            }
-        }
-
+        /*
         public static GFXGameLoad gfx_gameLoad;
 
         [HarmonyPatch(typeof(GUIScaleformInGame), "CreateGFXs")]
         [HarmonyPrefix]
         public static bool GUIScaleformInGame_CreateGFXs_Prefix(GUIScaleformInGame __instance)
         {
-            PrintAllObjectsInHierarchy();
+            InspectorDebugUtils.PrintHierarchy();
 
             MultiplayerScript multiplayerScript = new MultiplayerScript();
             var sfMgrField = typeof(SFCamera).GetField("SFMgr", BindingFlags.NonPublic | BindingFlags.Static);
@@ -135,5 +104,6 @@ namespace BugFixesAndQoL
         {
             __result = __instance.gfx_gameForces == null && __instance.gfx_gameRessources == null && __instance.gfx_gameMinimap == null && __instance.gfx_gamePauseMenu == null && __instance.gfx_option == null && __instance.gfx_gameTutorial == null && __instance.gfx_alertManager == null && __instance.gfx_migratingLoading == null && __instance.gfx_loading == null && gfx_gameLoad == null;
         }
+        */
     }
 }

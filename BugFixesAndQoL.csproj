@@ -33,5 +33,8 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>lib\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="EtheriumLib">
+      <HintPath>lib\EtheriumLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

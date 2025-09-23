@@ -1,20 +1,26 @@
 ﻿using BepInEx;
-using BepInEx.Logging;
 using BepInEx.Configuration;
+using BepInEx.Logging;
+using EtheriumLib.UI;
 using HarmonyLib;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 namespace BugFixesAndQoL;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess("Etherium.exe")]
+[BepInDependency("EtheriumLib")]
 public class Plugin : BaseUnityPlugin
 {
 	public static new ManualLogSource Logger;
-	ManualFixes ManualFixesInstance = new ManualFixes();
 
-	//Config Values
-	public static ConfigEntry<bool> configEndTurnOnInvade;
+	// Assets Folder
+    public static string AssetsFolderPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Assets");
+
+    // Config Values
+    public static ConfigEntry<bool> configEndTurnOnInvade;
 	public static ConfigEntry<string> configNatFacilitatorIP;
 	public static ConfigEntry<int> configNatFacilitatorPort;
 	public static ConfigEntry<bool> configDebugLogging;
@@ -37,10 +43,13 @@ public class Plugin : BaseUnityPlugin
 
 		// Remove AVProWindowsMedia-x64.dll if it exists
 		Logger.LogInfo("Checking for AVProWindowsMedia-x64.dll...");
-		ManualFixesInstance.CheckForAVProWindowsMediaX64Dll();
+		ManualFixes.CheckForAVProWindowsMediaX64Dll();
 
 		// Check if the game is running in DirectX 9
 		CheckGraphicsAPI();
+
+		// Load Custom UI
+		LoadCustomUI();
 	}
 
 	private void CreateConfigs()
@@ -88,5 +97,10 @@ public class Plugin : BaseUnityPlugin
 		{
 			Logger.LogWarning($"Warning: Game is not running in DirectX 9! Detected API: {graphicsAPI}. Please put '-force-d3d9' in your game's launch arguments on Steam to launch the game in DirectX 9 mode. This helps fix a severe crashing issue.");
 		}
+	}
+
+	private void LoadCustomUI()
+	{
+		ScaleformGFxUtils.RegisterOverride(this, "MainMenu.swf", AssetsFolderPath);
 	}
 }

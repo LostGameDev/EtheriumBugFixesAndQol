@@ -3,11 +3,11 @@ using System.IO;
 
 namespace BugFixesAndQoL
 {
-	public class ManualFixes
+	public static class ManualFixes
 	{
-		private string GameRootDirectory = Directory.GetCurrentDirectory();
+		private static string GameRootDirectory = Directory.GetCurrentDirectory();
 
-		public bool CheckForAVProWindowsMediaX64Dll()
+		public static bool CheckForAVProWindowsMediaX64Dll()
 		{
 			if (!File.Exists($"{GameRootDirectory}/Etherium_Data/Plugins/AVProWindowsMedia-x64.dll"))
 			{
