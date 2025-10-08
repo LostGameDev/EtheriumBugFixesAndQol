@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace BugFixesAndQoL;
 
-[BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess("Etherium.exe")]
 [BepInDependency("EtheriumLib")]
 public class Plugin : BaseUnityPlugin
@@ -33,7 +33,7 @@ public class Plugin : BaseUnityPlugin
 	{
 		// Plugin startup logic
 		Logger = base.Logger;
-		Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded! Version: {PluginInfo.PLUGIN_VERSION}");
+		Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded! Version: {MyPluginInfo.PLUGIN_VERSION}");
 		CreateConfigs();
 
 		// Change Nat Facilitator IP and Port
@@ -41,7 +41,7 @@ public class Plugin : BaseUnityPlugin
 		Network.natFacilitatorPort = configNatFacilitatorPort.Value;
 
 		// Initialize Harmony
-		Harmony harmony = new Harmony(PluginInfo.PLUGIN_GUID);
+		Harmony harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
 		harmony.PatchAll();
 
 		// Remove AVProWindowsMedia-x64.dll if it exists

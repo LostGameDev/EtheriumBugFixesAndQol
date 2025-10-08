@@ -13,6 +13,7 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>BugFixesAndQoL</RootNamespace>
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,13 @@
     <PackageReference Include="UnityEngine.Modules" Version="4.1.2" IncludeAssets="compile" />
   </ItemGroup>
   
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Delete Files="$(TargetDir)Assembly-CSharp.dll" />
+    <Delete Files="$(TargetDir)Assembly-CSharp-firstpass.dll" />
+    <Delete Files="$(TargetDir)EtheriumLib.dll" />
+    <Exec Command="call package.bat" />
+  </Target>
+
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
@@ -36,5 +44,11 @@
     <Reference Include="EtheriumLib">
       <HintPath>lib\EtheriumLib.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
