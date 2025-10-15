@@ -17,19 +17,19 @@ public class Plugin : BaseUnityPlugin
 	public static new ManualLogSource Logger;
 
 	// Assets Folder
-    public static string AssetsFolderPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Assets");
+	public static string AssetsFolderPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Assets");
 
 	// SWF Filepaths
-    public static string CustomMainMenuSWF = Path.Combine(AssetsFolderPath, "CustomMainMenu.swf");
+	public static string CustomMainMenuSWF = Path.Combine(AssetsFolderPath, "CustomMainMenu.swf");
 
-    // Config Values
-    public static ConfigEntry<bool> configEndTurnOnInvade;
+	// Config Values
+	public static ConfigEntry<bool> configEndTurnOnInvade;
 	public static ConfigEntry<string> configNatFacilitatorIP;
 	public static ConfigEntry<int> configNatFacilitatorPort;
 	public static ConfigEntry<bool> configDebugLogging;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members")]
-    private void Awake()
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members")]
+	private void Awake()
 	{
 		// Plugin startup logic
 		Logger = base.Logger;

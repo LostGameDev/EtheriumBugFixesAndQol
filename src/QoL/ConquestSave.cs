@@ -5,8 +5,8 @@ using EtheriumLib.Debug;
 
 namespace BugFixesAndQoL
 {
-    [HarmonyPatch]
-    public static class ConquestSave
-    {
-    }
+	[HarmonyPatch]
+	public static class ConquestSave
+	{
+	}
 }
